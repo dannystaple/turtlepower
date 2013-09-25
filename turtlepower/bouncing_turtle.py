@@ -27,6 +27,7 @@ class SpaceTurtle(PowerTurtle):
 
     def __init__(self, world):
         super(SpaceTurtle, self).__init__(world)
+        self.drawn_body = pm.Body()
         self.body = pm.Body(1, 1666)
         self.pm_shape = pm.Circle(self.body, 10.0, (0, 0))
         self.pm_shape.elasticity = 0.95
@@ -72,8 +73,7 @@ class SpaceTurtle(PowerTurtle):
         """Draw a line segment on the physics world"""
         if self.isdown():
             #For now - a body per segment - but this may be messy quickly
-            seg_body = pm.Body()
-            new_seg = pm.Segment(seg_body, old, new, 2.0)
+            new_seg = pm.Segment(self.drawn_body, old, new, 2.0)
             new_seg.elasticity = 0.95
             self.world.space.add(new_seg)
 
@@ -136,6 +136,7 @@ def setup():
     st2.setx(150)
     st2.sety(300)
     st2.color('blue')
+    st2.penup() 
     st2.set_callback(lambda t, w: None)
     world.add_turtle(st2)
     #st.body.mass = 4
