@@ -150,6 +150,7 @@ class TurtleWorld(object):
     def tick(self):
         shuffle(self.turtles)
         for t in self.turtles:
+            t.internal_callback(self)
             t.callback(self)
             self.borders(t, self.width, self.height)
         self.screen.update()
@@ -178,6 +179,10 @@ class PowerTurtleMixin(object):
         """Set the callback to a function, for classes usage"""
         self.callback = lambda world: callback(self, world)
 
+    def internal_callback(self, world):
+        """Override this if you are creating a class intended for student usage."""
+        pass
+        
     def turn_towards(self, desired, amount):
         """Helper to to turn a small amount towards a heading"""
         heading = self.heading()

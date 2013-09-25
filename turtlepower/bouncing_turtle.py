@@ -65,7 +65,7 @@ class SpaceTurtle(PowerTurtle):
         super(SpaceTurtle, self).sety(y)
         self.body.position = self.position()
 
-    def callback(self, world):
+    def internal_callback(self, world):
         super(SpaceTurtle, self).setpos(self.body.position)
         super(SpaceTurtle, self).settiltangle(self.body.angle)
 
@@ -94,6 +94,7 @@ class WorldWithLines:
     def draw(self):
         """Draw the static lines"""
         dt = SpaceTurtle(self.world)
+        dt.set_callback(lambda t, w: None)
         dt.body.static = True
         dt.hideturtle()
         for line in self.static_lines:
@@ -118,12 +119,14 @@ def setup():
     st.color('red')
     st.shape('circle')
     st.sety(300)
+    st.set_callback(lambda t, w: None)
     #st.body.apply_impulse((10, 0))
     world.add_turtle(st)
     st2 = SpaceTurtle(world)
     st2.setx(150)
     st2.sety(300)
     st2.color('blue')
+    st2.set_callback(lambda t, w: None)
     world.add_turtle(st2)
     #st.body.mass = 4
     #st.body.inertia = 1000
