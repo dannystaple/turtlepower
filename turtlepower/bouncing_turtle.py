@@ -47,6 +47,7 @@ class SpaceTurtle(PowerTurtle):
         self.body.activate()
 
     def setpos(self, x, y=None):
+        oldpos = self.position()
         if y is None:
             position = x
         else:
@@ -54,6 +55,8 @@ class SpaceTurtle(PowerTurtle):
         #print("Setting position %s", repr(position))
         self.body.position = position
         super(SpaceTurtle, self).setpos(position)
+        newpos = self.position()
+        self._draw_seg(oldpos, newpos)
 
     def setx(self, x):
         print("Setting x %d", x)
@@ -65,7 +68,17 @@ class SpaceTurtle(PowerTurtle):
         super(SpaceTurtle, self).sety(y)
         self.body.position = self.position()
 
+    def _draw_seg(self, old, new):
+        """Draw a line segment on the physics world"""
+        if self.isdown():
+            #For now - a body per segment - but this may be messy quickly
+            seg_body = pm.Body()
+            new_seg = pm.Segment(seg_body, old, new, 2.0)
+            new_seg.elasticity = 0.95
+            self.world.space.add(new_seg)
+
     def internal_callback(self, world):
+        self._draw_seg(self.position(), self.body.position)
         super(SpaceTurtle, self).setpos(self.body.position)
         super(SpaceTurtle, self).settiltangle(self.body.angle)
 
@@ -73,20 +86,17 @@ class SpaceTurtle(PowerTurtle):
 class WorldWithLines:
     def __init__(self, world):
         self.world = world
-        self.make_line_bodies()
+        self.coords = [[(-299.0, -250.0), (299.0, -259.0)],
+                  [(299.0, -259.0), (299.0, 250.0)],
+                  [(-299.0, -250.0), (-299.0, 250.0)]]
+        #self.make_line_bodies()
         self.draw()
 
     def make_line_bodies(self):
         """Create a line for the turtles to interact with"""
         self.static_body = pm.Body()
-        self.static_lines = [
-            pm.Segment(self.static_body, (-299.0, -250.0),
-                       (299.0, -259.0), 2.0),
-            pm.Segment(self.static_body,
-                       (299.0, -259.0), (299.0, 250.0), 2.0),
-            pm.Segment(self.static_body,
-                       (-299.0, -250.0), (-299.0, 250.0), 2.0)
-        ]
+        self.static_lines = [pm.Segment(self.static_body, start, end, 2.0) 
+                             for start, end in self.coords]
         for line in self.static_lines:
             line.elasticity = 0.95
         self.world.space.add(self.static_lines)
@@ -97,14 +107,14 @@ class WorldWithLines:
         dt.set_callback(lambda t, w: None)
         dt.body.static = True
         dt.hideturtle()
-        for line in self.static_lines:
+        for start, end in self.coords:
             dt.penup()
             #Go to line first coord
-            dt.goto(line.a)
+            dt.goto(start)
             #pen down
             dt.pendown()
             #Go to line 2nd coord
-            dt.goto(line.b)
+            dt.goto(end)
 
 
 def world_edge(*args, **kwargs):
