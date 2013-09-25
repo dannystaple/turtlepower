@@ -19,8 +19,7 @@ class SpaceWorld(TurtleWorld):
         super(SpaceWorld, self).tick()
         #note - if the step is too high - right now it can break its bounds.
         #This may be an interaction between tick, and the physics.
-        self.space.step(0.01)
-
+        self.space.step(0.50 / self.tick_interval)
 
 class SpaceTurtle(PowerTurtle):
     """Turtle with physics.
@@ -82,11 +81,11 @@ class WorldWithLines:
         self.static_body = pm.Body()
         self.static_lines = [
             pm.Segment(self.static_body, (-299.0, -250.0),
-                       (299.0, -259.0), 0.0),
+                       (299.0, -259.0), 2.0),
             pm.Segment(self.static_body,
-                       (299.0, -259.0), (299.0, 250.0), 0.0),
+                       (299.0, -259.0), (299.0, 250.0), 2.0),
             pm.Segment(self.static_body,
-                       (-299.0, -250.0), (-299.0, 250.0), 0.0)
+                       (-299.0, -250.0), (-299.0, 250.0), 2.0)
         ]
         for line in self.static_lines:
             line.elasticity = 0.95

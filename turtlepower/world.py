@@ -81,6 +81,8 @@ class TurtleWorld(object):
         self.fps = 0
         self.done = True
         self.turtles = []
+        
+        self.tick_interval = 33  # in ms
 
     def init_screen(self):
         # intialise screen and turn off auto-render
@@ -139,7 +141,7 @@ class TurtleWorld(object):
         if DEBUG:
             self.screen.ontimer(self._print_fps, 1000)
         self.ticks = ticks
-        self.screen.ontimer(self.tick, 33)
+        self.screen.ontimer(self.tick, self.tick_interval)
         if mainloop:
             mainloop()
         else:
@@ -156,7 +158,7 @@ class TurtleWorld(object):
         if self.ticks == 0:
             self.done = True
         else:
-            self.screen.ontimer(self.tick, 33)
+            self.screen.ontimer(self.tick, self.tick_interval)
 
 
 class PowerTurtleMixin(object):
